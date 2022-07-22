@@ -1,10 +1,13 @@
 #!/bin/bash +v
 
+C3P_PATH="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+echo "$C3P_PATH"
+
 function Install_netinfod() {
     echo "==== Install netinfod ===="
 
     sudo apt install -y nodejs npm
-    cd /home/$USER/control
+    cd $C3P_PATH
 
     sudo chmod +x netinfod.sh
     ./netinfod.sh
@@ -13,7 +16,7 @@ function Install_netinfod() {
 function Install_create_ap() {
     echo "==== Install create_ap ===="
 
-    cd $HOME/control
+    cd $C3P_PATH
 
     # 1、安装 create_ap 依赖包
     sudo apt install -y build-essential gcc g++ pkg-config make hostapd libpng-dev dnsmasq-base
@@ -21,8 +24,6 @@ function Install_create_ap() {
     # 编译安装 Create_AP, BSD-2-Clause license
     git clone https://github.com/lakinduakash/linux-wifi-hotspot
     cd linux-wifi-hotspot && sudo make install-cli-only
-
-    # chmod +x $HOME/control/update.sh
 
     # 创建配置文件
     sudo create_ap -n --no-virt --freq-band 2.4 --no-dns -g 192.168.10.1 wlan0 Cloud3DPrintBox --mkconfig /etc/create_ap.conf
@@ -38,10 +39,19 @@ function Install_nginx() {
     echo "==== Install nginx ===="
 
     sudo apt install -y nginx
-    cd $HOME/control
+    cd $C3P_PATH
 
     sudo cp ./nginx.conf /etc/nginx/
     sudo systemctl restart nginx.service
+}
+
+function Env_config() {
+    echo "==== Env config ===="
+    cd $C3P_PATH
+
+    chmod +x $C3P_PATH/scripts/wifi_creat_ap.sh
+    sudo sed -i "/exit 0/i \/${C3P_PATH}\/scripts/wifi_creat_ap.sh" /etc/rc.local 
+    sudo mv $C3P_PATH/scripts/system.cfg /etc/
 }
 
 git config --global http.proxy http://192.168.0.126:7890/
@@ -54,39 +64,40 @@ echo "Installing Git"
 sudo apt-get install git -y
 echo "Installing JDK"
 sudo apt install openjdk-11-jre -y
-if [ -d "/home/$USER/control" ];
+if [ -d "$C3P_PATH" ];
 then
-  echo "Control Application already exists"
-  read -p "Do you want to reinstall? (y|n)" -n 1 -r
-  if [[ $REPLY =~ ^[Yy]$ ]]
-    then
-      sudo systemctl disable c3p
-      sudo systemctl stop c3p
-      sudo systemctl disable tpcpilocal
-      sudo systemctl stop tpcpilocal
-      sudo rm /etc/systemd/system/c3p.service
-      sudo rm /etc/systemd/system/c3pUpgrade.service
-      sudo rm /etc/systemd/system/tpcpilocal.service
-      sudo rm -rf /home/$USER/control
-    else
-      exit 0
-  fi
+    echo "Control Application already exists"
+    read -p "Do you want to reinstall? (y|n)" -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            sudo systemctl disable c3p
+            sudo systemctl stop c3p
+            sudo systemctl disable tpcpilocal
+            sudo systemctl stop tpcpilocal
+            sudo rm /etc/systemd/system/c3p.service
+            sudo rm /etc/systemd/system/c3pUpgrade.service
+            sudo rm /etc/systemd/system/tpcpilocal.service
+            sudo rm -rf $C3P_PATH
+        else
+            exit 0
+    fi
 fi
+
 echo "Downloading Control Application"
 #git clone -b 1.6.2 https://github.com/cloud-3D-Print/Control-Application
-mv /home/$USER/Control-Application /home/$USER/control
-echo "Enabling CSI"
-echo $'\n#Enable CSI\nstart_x=1' | sudo tee -a /boot/config.txt
+# mv /home/$USER/Cloud3DPrinter $C3P_PATH
+# echo "Enabling CSI"
+# echo $'\n#Enable CSI\nstart_x=1' | sudo tee -a /boot/config.txt
 echo "Configuring config file for user: $USER"
-sudo touch /home/$USER/control/config.json
-sudo tee /home/$USER/control/config.json &>/dev/null <<EOF
+sudo touch $C3P_PATH/config.json
+sudo tee $C3P_PATH/config.json &>/dev/null <<EOF
 {
-  "logFilePath": "/home/$USER/control/logs/control.log",
-  "distFolderPath": "/home/$USER/control/dist/",
-  "downloadedGcodePath": "/home/$USER/control/gcode/",
-  "streamFolderSavePath": "/home/$USER/control/media/",
-  "dbFolderPath": "/home/$USER/control/h2db",
-  "controlFolderPath": "/home/$USER/control/"
+    "logFilePath": "$C3P_PATH/logs/control.log",
+    "distFolderPath": "$C3P_PATH/dist/",
+    "downloadedGcodePath": "$C3P_PATH/gcode/",
+    "streamFolderSavePath": "$C3P_PATH/media/",
+    "dbFolderPath": "$C3P_PATH/h2db",
+    "controlFolderPath": "$C3P_PATH/"
 }
 EOF
 #sed -i "s/pi/$USER/g" control/config.json
@@ -104,8 +115,7 @@ After=multi-user.target
 
 [Service]
 WorkingDirectory=/home/$USER
-ExecStartPre=/home/$USER/control/update.sh
-ExecStart=/bin/sh -c 'java -cp /home/$USER/control/Cloud3DPrint-v*.jar com.cloud3dprint.Main /home/$USER/control/config.json'
+ExecStart=/bin/sh -c 'java -cp $C3P_PATH/Cloud3DPrint-v*.jar com.cloud3dprint.Main $C3P_PATH/config.json'
 User=root
 Type=simple
 Restart=on-failure
@@ -129,30 +139,21 @@ After=multi-user.target
 
 [Service]
 WorkingDirectory=/home/$USER
-ExecStart=/home/$USER/control/media/upgrade.sh
+ExecStart=$C3P_PATH/media/upgrade.sh
 User=root
 Type=simple
 EOF
 
-echo "Creating update file"
-sudo touch /home/$USER/control/update.sh
-sudo tee /home/$USER/control/update.sh &>/dev/null <<EOF
-#!/bin/bash +v
-cd /home/$USER/control
-sudo git pull || true
-EOF
-sudo chmod +x /home/$USER/control/update.sh
+chmod +x $C3P_PATH/tpcpilocal/tpcpilocal
+sudo touch $C3P_PATH/tpcpilocal/tpcpi_localconfig.yml
 
-chmod +x /home/$USER/control/tpcpilocal/tpcpilocal
-
-sudo touch /home/$USER/control/tpcpilocal/tpcpi_localconfig.yml
-sudo tee /home/$USER/control/tpcpilocal/tpcpi_localconfig.yml &>/dev/null <<EOF
+sudo tee $C3P_PATH/tpcpilocal/tpcpi_localconfig.yml &>/dev/null <<EOF
 ### resolution support 360P, 480P, 720P, 1080P, 2K. default is 720P
 resolution: 720P
-gpuJPEGQualityRank: 8    ### 1~10
+gpuJPEGQualityRank: 8       ### 1~10
 localVidHttpPort: 9988
 gRPCPortForPrinterControler: 19988
-iNotifyConfFile: /home/$USER/control/AI_Config.json
+iNotifyConfFile: $C3P_PATH/AI_Config.json
 EOF
 
 sudo touch /etc/systemd/system/tpcpilocal.service
@@ -163,9 +164,9 @@ After=network-online.target syslog.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/$USER/control/tpcpilocal
+WorkingDirectory=$C3P_PATH/tpcpilocal
 User=$USER
-ExecStart=/home/$USER/control/tpcpilocal/tpcpilocal
+ExecStart=$C3P_PATH/tpcpilocal/tpcpilocal
 Restart=on-failure
 LimitNOFILE=65536
 RestartSec=5s
@@ -217,5 +218,3 @@ echo "Welcome to Cloud3DPrint! Please go to $(hostname -I) to connect your 3D pr
 echo "Use 'sudo systemctl status c3p' to check the status of the application"
 echo "Use 'sudo systemctl reload c3p' to reload the application"
 echo "If you are using a Raspberry Pi Camera, please restart the system with 'sudo reboot' for it to be detected"
-
-
