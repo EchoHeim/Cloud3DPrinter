@@ -1,0 +1,107 @@
+[
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G28",
+    "commandDesc": "auto-home",
+    "commandDescLong": "Homes all the 3d printer axis"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G29",
+    "commandDesc": "auto-level",
+    "commandDescLong": "Levels the 3d printer"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G1",
+    "commandDesc": "move-printer",
+    "commandDescLong": "Moves the printer along the selected axis"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G91",
+    "commandDesc": "relative-pos",
+    "commandDescLong": "Set relative position mode. In this mode all coordinates are interpreted as relative to the last position"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G90",
+    "commandDesc": "absolute-pos",
+    "commandDescLong": "In absolute mode all coordinates given in G-code are interpreted as positions in the logical coordinate space."
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M140",
+    "commandDesc": "temp-change-bed",
+    "commandDescLong": "Set a new target heated bed temperature and continue without waiting."
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M104 ",
+    "commandDesc": "temp-change-hotend",
+    "commandDescLong": "Set a new target hot end temperature and continue without waiting. The firmware will continue to try to reach and hold the temperature in the background."
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G28 X",
+    "commandDesc": "auto-home-x",
+    "commandDescLong": "Homes the x axis"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G28 Y",
+    "commandDesc": "auto-home-y",
+    "commandDescLong": "Homes the y axis"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "G28 Z",
+    "commandDesc": "auto-home-z",
+    "commandDescLong": "Homes the z axis"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M106 S",
+    "commandDesc": "fan-speed",
+    "commandDescLong": "Sets the fan speed"
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M115 S",
+    "commandDesc": "temp-auto-report",
+    "commandDescLong": "It can be useful for host software to track temperatures, display and graph them over time, but polling with M105 is less than optimal. With M155 hosts simply set an interval and Marlin will keep sending data automatically. This method is preferred over polling with M105."
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M105",
+    "commandDesc": "temp-report",
+    "commandDescLong": "Request a temperature report to be sent to the host at some point in the future."
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M17",
+    "commandDesc": "enable-all-steppers",
+    "commandDescLong": "Enable all stepper motors for X, Y, Z and E."
+  },
+  {
+    "id": 0,
+    "firmware": "marlin",
+    "command": "M18",
+    "commandDesc": "disable-all-steppers",
+    "commandDescLong": "Disable all stepper motors for X, Y, Z and E."
+  }
+]
