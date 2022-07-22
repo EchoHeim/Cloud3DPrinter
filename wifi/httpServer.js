@@ -29,7 +29,7 @@ app.post('/data/wifi/update', (req, res) => {
     }
 
     //fs.writeFile('./conf/netinfo.txt', content, err => {
-    fs.writeFile('/home/biqu/control/wifi/conf/netinfo.txt', content, err => {
+    fs.writeFile('/home/biqu/Cloud3DPrinter/wifi/conf/netinfo.txt', content, err => {
         if (err) {
             console.error(err);
         }

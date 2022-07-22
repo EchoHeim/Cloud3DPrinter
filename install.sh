@@ -50,8 +50,8 @@ function Env_config() {
     cd $C3P_PATH
 
     chmod +x $C3P_PATH/scripts/wifi_creat_ap.sh
-    sudo sed -i "/exit 0/i \/${C3P_PATH}\/scripts/wifi_creat_ap.sh" /etc/rc.local 
-    sudo mv $C3P_PATH/scripts/system.cfg /etc/
+    sudo sed -i "/exit 0/i ${C3P_PATH}\/scripts/wifi_creat_ap.sh &" /etc/rc.local 
+    sudo mv $C3P_PATH/scripts/system.cfg /boot/
 }
 
 git config --global http.proxy http://192.168.0.126:7890/
@@ -64,28 +64,9 @@ echo "Installing Git"
 sudo apt-get install git -y
 echo "Installing JDK"
 sudo apt install openjdk-11-jre -y
-if [ -d "$C3P_PATH" ];
-then
-    echo "Control Application already exists"
-    read -p "Do you want to reinstall? (y|n)" -n 1 -r
-    if [[ $REPLY =~ ^[Yy]$ ]]
-        then
-            sudo systemctl disable c3p
-            sudo systemctl stop c3p
-            sudo systemctl disable tpcpilocal
-            sudo systemctl stop tpcpilocal
-            sudo rm /etc/systemd/system/c3p.service
-            sudo rm /etc/systemd/system/c3pUpgrade.service
-            sudo rm /etc/systemd/system/tpcpilocal.service
-            sudo rm -rf $C3P_PATH
-        else
-            exit 0
-    fi
-fi
 
-echo "Downloading Control Application"
 #git clone -b 1.6.2 https://github.com/cloud-3D-Print/Control-Application
-# mv /home/$USER/Cloud3DPrinter $C3P_PATH
+
 # echo "Enabling CSI"
 # echo $'\n#Enable CSI\nstart_x=1' | sudo tee -a /boot/config.txt
 echo "Configuring config file for user: $USER"
@@ -183,6 +164,8 @@ Install_inotify
 Install_netinfod
 Install_create_ap
 Install_nginx
+
+Env_config
 
 git config --global --unset http.proxy
 git config --global --unset https.proxy

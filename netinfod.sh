@@ -16,7 +16,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/node $HOME/control/wifi/httpServer.js
+ExecStart=/usr/bin/node $C3P_PATH/wifi/httpServer.js
 KillSignal=SIGINT
 Restart=on-failure
 User=$USER

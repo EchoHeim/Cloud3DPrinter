@@ -1,7 +1,9 @@
 #!/bin/bash    
 
-SYS_CFG=/etc/system.cfg
-WORK_DIR=/home/biqu/control
+wifi_shell_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+SYS_CFG=/boot/system.cfg
+WORK_DIR=$wifi_shell_DIR/..
 WIFI_CFG=$WORK_DIR/wifi/conf/netinfo.txt
 
 IS_AP_MODE="no"
