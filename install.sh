@@ -9,8 +9,29 @@ function Install_netinfod() {
     sudo apt install -y nodejs npm
     cd $C3P_PATH
 
-    sudo chmod +x netinfod.sh
-    ./netinfod.sh
+    # sudo chmod +x netinfod.sh
+    # ./netinfod.sh
+
+    cat << _EOF_ > /tmp/netinfod.service
+# /lib/systemd/system/netinfod.service
+[Unit]
+Description=generate netinfo Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node $C3P_PATH/wifi/httpServer.js
+KillSignal=SIGINT
+Restart=on-failure
+User=$USER
+
+[Install]
+WantedBy=multi-user.target
+_EOF_
+
+sudo mv /tmp/netinfod.service /lib/systemd/system/netinfod.service
+sudo systemctl enable --now netinfod.service
+
 }
 
 function Install_create_ap() {

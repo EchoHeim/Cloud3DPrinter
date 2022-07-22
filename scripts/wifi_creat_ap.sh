@@ -20,7 +20,7 @@ function Env_init() {
     fi
 
     sudo kill -9 `pidof wpa_supplicant`
-    sleep 6
+    sleep 10
     sudo systemctl restart NetworkManager
 }
 
