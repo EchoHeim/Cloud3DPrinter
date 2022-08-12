@@ -75,9 +75,6 @@ function Env_config() {
     sudo mv $C3P_PATH/scripts/system.cfg /boot/
 }
 
-git config --global http.proxy http://192.168.0.126:7890/
-git config --global https.proxy https://192.168.0.126:7890/
-
 set -e
 echo "Getting updates"
 sudo apt-get update
@@ -187,9 +184,6 @@ Install_create_ap
 Install_nginx
 
 Env_config
-
-git config --global --unset http.proxy
-git config --global --unset https.proxy
 
 sudo systemctl daemon-reload
 sudo systemctl enable c3p.service
