@@ -39,7 +39,7 @@ function is_network() {
 function Create_AP_ON() {
     if [[ $IS_AP_MODE == "no" && $sta_mount -gt 1 ]]; then
         nmcli device disconnect $wlan
-        sudo systemctl start create_ap
+        sudo systemctl restart create_ap
         sleep 2
         IS_AP_MODE="yes"
 
@@ -80,7 +80,16 @@ function startWifi_sta() {
     sta_mount=`expr $sta_mount + 1`
     echo $(date)" .... sta connecting...$sta_mount..." >> $WORK_DIR/wifi.log
     
-    Create_AP_OFF
+    if [[ $(is_network $wlan) == no ]]; then
+        source $SYS_CFG
+        echo -e $(date)" ==== $wlan prepare connection... -WIFI_SSID:$WIFI_SSID -WIFI_PASSWD:$WIFI_PASSWD" >> $WORK_DIR/wifi.log
+        sudo nmcli dev wifi connect $WIFI_SSID password $WIFI_PASSWD ifname $wlan
+        sleep 5
+        Create_AP_ON
+    else
+        sta_mount=0
+        IS_AP_MODE="no"
+    fi
 
     # sudo nmcli dev wifi connect $WIFI_SSID password $WIFI_PASSWD wep-key-type key ifname $wlan
 }
