@@ -48,6 +48,7 @@ function Create_AP_ON() {
         then
             echo -e $(date)" ==== $wlan modify cfg..." >> $WORK_DIR/wifi.log
             IS_AP_MODE="no"
+            sleep 4
             source $WIFI_CFG
             sudo sed -i "s/^WIFI_SSID=.*$/WIFI_SSID=$WIFI_SSID/" $SYS_CFG
             sudo sed -i "s/^WIFI_PASSWD=.*$/WIFI_PASSWD=$WIFI_PASSWD/" $SYS_CFG
