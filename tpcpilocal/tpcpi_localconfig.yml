@@ -1,0 +1,6 @@
+### resolution support 360P, 480P, 720P, 1080P, 2K. default is 720P
+resolution: 720P
+gpuJPEGQualityRank: 8    ### 1~10
+localVidHttpPort: 9988
+gRPCPortForPrinterControler: 19988
+iNotifyConfFile: /home/pi/control/AI_Config.json

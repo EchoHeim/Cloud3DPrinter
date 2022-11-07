@@ -1,0 +1,19 @@
+[Unit]
+Description=TPCPI Local Daemon
+After=network-online.target syslog.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/control/tpcpilocal
+User=root
+ExecStart=/home/pi/control/tpcpilocal/tpcpilocal
+Restart=on-failure
+LimitNOFILE=65536
+RestartSec=5s
+TimeoutSec=0
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=tpcpilocal
+
+[Install]
+WantedBy=multi-user.target

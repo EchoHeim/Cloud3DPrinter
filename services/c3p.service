@@ -1,0 +1,16 @@
+[Unit]
+Description=Cloud 3D Print Control Application
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+WorkingDirectory=/home/pi
+ExecStartPre=/bin/sh -c "git --git-dir /home/pi/control/.git log --no-walk --tags --pretty='%%H %%d' --decorate=full > /home/pi/control/logs/GitLog"
+ExecStart=/bin/sh -c 'java -cp /home/pi/control/Cloud3DPrint-v*.jar com.cloud3dprint.Main /home/pi/control/config.json'
+User=root
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

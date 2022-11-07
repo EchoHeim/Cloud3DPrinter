@@ -1,0 +1,9 @@
+[Unit]
+Description=Cloud 3D Print Control Application Upgrade
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/pi
+ExecStart=/home/pi/control/restart.sh
+User=root
+Type=simple
